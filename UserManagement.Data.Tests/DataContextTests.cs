@@ -1,5 +1,6 @@
 using System.Linq;
-using FluentAssertions;
+//using FluentAssertions;
+using UserManagement.Data.Repositories;
 using UserManagement.Models;
 
 namespace UserManagement.Data.Tests;
@@ -11,6 +12,7 @@ public class DataContextTests
     {
         // Arrange: Initializes objects and sets the value of the data that is passed to the method under test.
         var context = CreateContext();
+        var repository = new UserRepository(context);
 
         var entity = new User
         {
@@ -18,10 +20,10 @@ public class DataContextTests
             Surname = "User",
             Email = "brandnewuser@example.com"
         };
-        context.Create(entity);
+        repository.Create(entity);
 
         // Act: Invokes the method under test with the arranged parameters.
-        var result = context.GetAll<User>();
+        var result = repository.GetAll<User>();
 
         // Assert: Verifies that the action of the method under test behaves as expected.
         result
@@ -34,11 +36,12 @@ public class DataContextTests
     {
         // Arrange: Initializes objects and sets the value of the data that is passed to the method under test.
         var context = CreateContext();
-        var entity = context.GetAll<User>().First();
-        context.Delete(entity);
+        var repository = new UserRepository(context);
+        var entity = repository.GetAll<User>().First();
+        repository.Delete(entity);
 
         // Act: Invokes the method under test with the arranged parameters.
-        var result = context.GetAll<User>();
+        var result = repository.GetAll<User>();
 
         // Assert: Verifies that the action of the method under test behaves as expected.
         result.Should().NotContain(s => s.Email == entity.Email);

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using UserManagement.Data;
 using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,9 @@ builder.Services
     .AddDataAccess()
     .AddDomainServices()
     .AddMarkdown()
+     .AddScoped<DataContext>()
     .AddControllersWithViews();
+   
 
 var app = builder.Build();
 

@@ -1,9 +1,9 @@
-﻿using UserManagement.Data;
+﻿using UserManagement.Data.Repositories;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDataAccess(this IServiceCollection services)
-        => services.AddScoped<IDataContext, DataContext>();
+        => services.AddScoped<IUserRepository, UserRepository>();
 }

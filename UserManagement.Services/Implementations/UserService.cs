@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using UserManagement.Data;
+using UserManagement.Data.Repositories;
 using UserManagement.Models;
 using UserManagement.Services.Domain.Interfaces;
 
@@ -8,8 +8,8 @@ namespace UserManagement.Services.Domain.Implementations;
 
 public class UserService : IUserService
 {
-    private readonly IDataContext _dataAccess;
-    public UserService(IDataContext dataAccess) => _dataAccess = dataAccess;
+    private readonly IUserRepository _dataAccess;
+    public UserService(IUserRepository dataAccess) => _dataAccess = dataAccess;
 
     /// <summary>
     /// Return users by active state

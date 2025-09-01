@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+namespace UserManagement.Data.Repositories;
 
-namespace UserManagement.Data;
-
-public interface IDataContext
+public interface IUserRepository
 {
     /// <summary>
     /// Get a list of items

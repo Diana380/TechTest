@@ -1,4 +1,5 @@
 using System.Linq;
+using UserManagement.Data.Repositories;
 using UserManagement.Models;
 using UserManagement.Services.Domain.Implementations;
 
@@ -40,6 +41,6 @@ public class UserServiceTests
         return users;
     }
 
-    private readonly Mock<IDataContext> _dataContext = new();
+    private readonly Mock<IUserRepository> _dataContext = new();
     private UserService CreateService() => new(_dataContext.Object);
 }
