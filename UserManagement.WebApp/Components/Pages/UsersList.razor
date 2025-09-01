@@ -1,0 +1,119 @@
+﻿@page "/users"
+@using static System.Net.WebRequestMethods
+@attribute [StreamRendering]
+
+<PageTitle>Users List</PageTitle>
+
+<h1>Users</h1>
+
+@if (filteredUsers == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<h2>User List</h2>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Forename</th>
+					<th>Surname</th>
+					<th>Email</th>
+					<th>Account Active</th>
+					<th style="width: 1px;"></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in filteredUsers)
+				{
+					<tr>
+						<td>
+							@item.Id
+						</td>
+						<td>
+							@item.Forename
+						</td>
+						<td>
+							@item.Surname
+						</td>
+						<td>
+							@item.Email
+						</td>
+						<td>
+							@(item.IsActive ? "Yes" : "No")
+						</td>
+						<td>
+							<div class="dropdown">
+								<button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="btnToggleActions">
+									Actions
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="btnToggleActions">
+									<li><a class="dropdown-item" href="#">View</a></li>
+									<li><a class="dropdown-item" href="#">Edit</a></li>
+									<li><a class="dropdown-item" href="#">Delete</a></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<div>
+		<div class="btn-group" role="group">
+			<button @onclick="ShowAll" class="btn btn-default">Show All</button>
+			<button @onclick="ShowActiveOnly" class="btn btn-default">Active Only</button>
+			<button class="btn btn-default" @onclick="ShowInactiveOnly">Non Active</button>
+		</div>
+
+		<a href="#" class="btn btn-primary float-end">
+			Add User
+		</a>
+	</div>
+
+}
+@inject HttpClient Http
+@code {
+
+	private Users[]? users;
+	private Users[]? filteredUsers;
+
+	protected override async Task OnInitializedAsync()
+	{
+		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
+		filteredUsers = users;
+	}
+
+	private void ShowAll()
+	{
+		if (users != null)
+			filteredUsers = users;		
+	}
+
+	private void ShowActiveOnly()
+	{
+		if (users != null)
+			filteredUsers = users.Where(u => u.IsActive).ToArray();
+		
+	}
+	private void ShowInactiveOnly()
+	{
+		if (users != null)
+			filteredUsers = users.Where(u => !u.IsActive).ToArray();
+		
+	}
+
+	private class Users
+	{
+		public long Id { get; set; }
+		public string? Forename { get; set; }
+		public string? Surname { get; set; }
+		public string? Email { get; set; }
+		public bool IsActive { get; set; }
+	}
+
+}
