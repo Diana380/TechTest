@@ -1,4 +1,4 @@
-﻿using UserManagement.Models;
+﻿using UserManagement.Data.Models;
 using System.Data.Entity;
 
 

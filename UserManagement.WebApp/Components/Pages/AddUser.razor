@@ -1,0 +1,83 @@
+﻿@page "/addUser"
+@using UserManagement.WebApp.Models
+@using static System.Net.WebRequestMethods
+@attribute [StreamRendering]
+
+<PageTitle>Add User</PageTitle>
+<EditForm EditContext="editContext" OnValidSubmit="Submit" FormName="Add User">
+	<div>
+		<label>			
+			Forename
+			<InputText @bind-Value="user!.Forename" />
+		</label>		
+	</div>
+	<br />
+	<div>
+		<label>			
+			Surname
+			<InputText @bind-Value="user!.Surname" />
+		</label>
+	</div>
+	<br />
+	<div>
+		<label>
+			Email
+			<InputText @bind-Value="user!.Email" />
+		</label>
+	</div>
+	<br />
+	<div>
+		<label>
+			Date of Birth
+			<InputDate @bind-Value="user!.DateOfBirth" />
+		</label>
+	</div>
+	<br />
+	<div>
+		<button class="btn btn-primary" type="submit">Update</button>
+	</div>
+</EditForm>
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+@code {
+	private EditContext? editContext;
+	private void NavigateToUsersComponent() => Navigation.NavigateTo("users");
+
+	[SupplyParameterFromForm]
+	private UserManagement.WebApp.Models.Users? user { get; set; }
+
+	private ValidationMessageStore? messageStore;
+
+	protected override void OnInitialized()
+	{
+		user = new UserManagement.WebApp.Models.Users();
+		editContext = new(user);
+		editContext.OnValidationRequested += HandleValidationRequested;
+		messageStore = new(editContext);
+	}
+
+	private void HandleValidationRequested(object? sender,
+		ValidationRequestedEventArgs args)
+	{
+		messageStore?.Clear();
+
+	}
+
+	private async Task Submit()
+	{
+		await Http.PostAsJsonAsync("https://localhost:7280/users/Create", user);
+		NavigateToUsersComponent();
+	}  
+
+
+
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnValidationRequested -= HandleValidationRequested;
+		}
+	}
+}

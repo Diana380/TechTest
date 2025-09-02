@@ -1,12 +1,11 @@
 ﻿@page "/users"
+@using UserManagement.WebApp.Models
 @using static System.Net.WebRequestMethods
 @attribute [StreamRendering]
 
 <PageTitle>Users List</PageTitle>
 
-<h1>Users</h1>
-
-@if (filteredUsers == null)
+@if (users == null)
 {
 	<p><em>Loading...</em></p>
 }
@@ -23,11 +22,12 @@ else
 					<th>Surname</th>
 					<th>Email</th>
 					<th>Account Active</th>
+					<th>Date of Birth</th>
 					<th style="width: 1px;"></th>
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (var item in filteredUsers)
+				@foreach (var item in users)
 				{
 					<tr>
 						<td>
@@ -44,6 +44,9 @@ else
 						</td>
 						<td>
 							@(item.IsActive ? "Yes" : "No")
+						</td>
+						<td>
+							@(item.DateOfBirth)
 						</td>
 						<td>
 							<div class="dropdown">
@@ -70,50 +73,44 @@ else
 			<button class="btn btn-default" @onclick="ShowInactiveOnly">Non Active</button>
 		</div>
 
-		<a href="#" class="btn btn-primary float-end">
-			Add User
-		</a>
+		<a href="addUser" class="btn btn-default">Add User</a>
+
+
 	</div>
+	
+
+
 
 }
 @inject HttpClient Http
+
+
 @code {
 
 	private Users[]? users;
-	private Users[]? filteredUsers;
 
 	protected override async Task OnInitializedAsync()
 	{
 		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
-		filteredUsers = users;
+
 	}
 
-	private void ShowAll()
+	private async Task ShowAll()
 	{
-		if (users != null)
-			filteredUsers = users;		
+		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
 	}
 
-	private void ShowActiveOnly()
+	private async Task ShowActiveOnly()
 	{
-		if (users != null)
-			filteredUsers = users.Where(u => u.IsActive).ToArray();
-		
+		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetActive/True");
+
 	}
-	private void ShowInactiveOnly()
+	private async Task ShowInactiveOnly()
 	{
-		if (users != null)
-			filteredUsers = users.Where(u => !u.IsActive).ToArray();
-		
+		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetActive/False");
+
 	}
 
-	private class Users
-	{
-		public long Id { get; set; }
-		public string? Forename { get; set; }
-		public string? Surname { get; set; }
-		public string? Email { get; set; }
-		public bool IsActive { get; set; }
-	}
+
 
 }

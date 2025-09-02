@@ -1,6 +1,6 @@
 using System.Linq;
 using UserManagement.Data.Repositories;
-using UserManagement.Models;
+using UserManagement.Data.Models;
 using UserManagement.Services.Domain.Implementations;
 
 namespace UserManagement.Data.Tests;

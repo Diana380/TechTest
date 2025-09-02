@@ -1,6 +1,5 @@
 using UserManagement.WebApp.Components;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +10,7 @@ builder.Services.AddScoped(sp =>
     {
         BaseAddress = new Uri("https://localhost:5191")
     });
+builder.Services.AddBootstrapBlazor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
