@@ -55,15 +55,23 @@ else
 								</button>
 								<ul class="dropdown-menu" aria-labelledby="btnToggleActions">
 									<li><a class="dropdown-item" href="#">View</a></li>
-									<li><a class="dropdown-item" href="#">Edit</a></li>
-									<li><a class="dropdown-item" href="#">Delete</a></li>
+									<li>
+										<button class="dropdown-item" @onclick="() => ShowEditModal(item)">Edit</button>
+									</li>
+									<li><button @onclick="() => DeleteUser(item)" class="btn btn-default">Delete</button></li>
 								</ul>
 							</div>
 						</td>
 					</tr>
+
+
 				}
 			</tbody>
 		</table>
+		@if (isEditModalVisible && selectedUser != null)
+		{
+			<UserManagement.WebApp.Components.Shared.EditUserModal User="selectedUser" IsVisible="isEditModalVisible" IsVisibleChanged="@(visible => isEditModalVisible = visible)" OnSave="HandleUserSave" />
+		}
 	</div>
 
 	<div>
@@ -88,6 +96,8 @@ else
 @code {
 
 	private Users[]? users;
+	private bool isEditModalVisible = false;
+	private Users? selectedUser;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -110,7 +120,24 @@ else
 		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetActive/False");
 
 	}
+	private async Task DeleteUser(UserManagement.WebApp.Models.Users user)
+	{
+		await Http.PostAsJsonAsync("https://localhost:7280/users/delete", user);
+		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
+	}
 
+	private void ShowEditModal(Users user)
+	{
+		selectedUser = user;
+		isEditModalVisible = true;
+	}
 
-
+	private async Task HandleUserSave(Users updatedUser)
+	{
+		// Call your API to update the user
+		await Http.PostAsJsonAsync("https://localhost:7280/users/update", updatedUser);
+		// Refresh the list
+		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
+		isEditModalVisible = false;
+	}
 }

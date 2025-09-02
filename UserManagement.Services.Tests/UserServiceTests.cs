@@ -15,7 +15,7 @@ public class UserServiceTests
         var users = SetupUsers();
 
         // Act: Invokes the method under test with the arranged parameters.
-        var result = service.GetAll();
+        var result = service.GetAllUsers();
 
         // Assert: Verifies that the action of the method under test behaves as expected.
         result.Should().BeSameAs(users);
@@ -42,5 +42,6 @@ public class UserServiceTests
     }
 
     private readonly Mock<IUserRepository> _dataContext = new();
-    private UserService CreateService() => new(_dataContext.Object);
+    private readonly Mock<IAuditLogRepository> _auditContext = new();
+    private UserService CreateService() => new(_dataContext.Object, _auditContext.Object);
 }

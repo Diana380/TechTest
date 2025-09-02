@@ -1,5 +1,6 @@
 ﻿using UserManagement.Data.Models;
 using System.Data.Entity;
+using UserManagement.Data.Entities;
 
 
 
@@ -12,4 +13,5 @@ public class DataContext : DbContext
     }
 
     public DbSet<User>? Users { get; set; }
+    public required DbSet<AuditLog> AuditLogs { get; set; }
 }

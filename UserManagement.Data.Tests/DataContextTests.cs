@@ -3,6 +3,8 @@ using System.Linq;
 using UserManagement.Data.Repositories;
 using UserManagement.Data.Models;
 using System.Threading.Tasks;
+using UserManagement.Data.Entities;
+using System.Data.Entity;
 
 namespace UserManagement.Data.Tests;
 
@@ -52,6 +54,13 @@ public class DataContextTests
         // Assert: Verifies that the action of the method under test behaves as expected.
         result.Should().NotContain(s => s.Forename == "Brand New");
     }
-
-    private DataContext CreateContext() => new();
+    
+ 
+    private DataContext CreateContext()
+    {
+        var auditLogs = new Mock<DbSet<AuditLog>>();
+        var context = new Mock<DataContext>();
+        context.Setup(c => c.AuditLogs).Returns(auditLogs.Object);
+        return context.Object;
+    }
 }

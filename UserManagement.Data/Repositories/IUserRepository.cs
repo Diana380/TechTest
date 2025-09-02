@@ -25,7 +25,7 @@ public interface IUserRepository
     /// <typeparam name="TEntity"></typeparam>
     /// <param name="entity"></param>
     /// <returns></returns>
-    Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class;
+    Task UpdateAsync(Models.User user);
 
     Task DeleteAsync<TEntity>(TEntity entity) where TEntity : class;
 }

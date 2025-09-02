@@ -1,0 +1,68 @@
+﻿@page "/userauditlogs"
+@using UserManagement.WebApp.Models
+@using static System.Net.WebRequestMethods
+@attribute [StreamRendering]
+
+<PageTitle>Users Audit Logs</PageTitle>
+
+@if (auditLogs == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<h2>User Audit Logs</h2>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Action</th>
+					<th>Entity Namr</th>
+					<th>Entity Id</th>
+					<th>Details</th>
+					<th>Timestamp</th>
+					<th style="width: 1px;"></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in auditLogs!)
+				{
+					<tr>
+						<td>
+							@item.Id
+						</td>
+						<td>
+							@item.Action
+						</td>
+						<td>
+							@item.EntityName
+						</td>
+						<td>
+							@item.EntityId
+						</td>
+						<td>
+							@item.Details
+						</td>
+						<td>
+							@item.Timestamp
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+@inject HttpClient Http
+
+@code {
+	private AuditLogs[]? auditLogs;
+
+	protected override async Task OnInitializedAsync()
+	{
+		auditLogs = await Http.GetFromJsonAsync<AuditLogs[]>("https://localhost:7280/logs/GetAll");
+	}
+}
+

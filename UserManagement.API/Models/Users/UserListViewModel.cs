@@ -16,13 +16,13 @@ public class UserListItemViewModel
     public DateTime? DateOfBirth { get; set; }
     public bool IsActive { get; set; }
 
-public static implicit operator UserListItemViewModel(User user) => new UserListItemViewModel
-{
-    Id = user.Id,
-    Forename = user.Forename,
-    Surname = user.Surname,
-    Email = user.Email,
-    IsActive = user.IsActive
-};
+    public static implicit operator UserListItemViewModel(User user) => new UserListItemViewModel
+    {
+        Id = user.Id,
+        Forename = user.Forename,
+        Surname = user.Surname,
+        Email = user.Email,
+        IsActive = user.IsActive
+    };
 
 }

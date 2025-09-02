@@ -1,0 +1,81 @@
+@using UserManagement.WebApp.Models
+@inject NavigationManager Navigation
+
+@if (IsVisible)
+{
+    <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" @onclick="Close"></button>
+                </div>
+                <EditForm Model="EditableUser" OnValidSubmit="HandleValidSubmit">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Forename</label>
+                            <InputText class="form-control" @bind-Value="EditableUser.Forename" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Surname</label>
+                            <InputText class="form-control" @bind-Value="EditableUser.Surname" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <InputText class="form-control" @bind-Value="EditableUser.Email" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <InputDate class="form-control" @bind-Value="EditableUser.DateOfBirth" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Active</label>
+                            <InputCheckbox class="form-check-input" @bind-Value="EditableUser.IsActive" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" @onclick="Close">Cancel</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Users? User { get; set; }
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] public EventCallback<Users> OnSave { get; set; }
+
+    private Users EditableUser = new();
+
+    protected override void OnParametersSet()
+    {
+        if (User != null)
+        {
+            // Create a copy to avoid editing the original until save
+            EditableUser = new Users
+            {
+                Id = User.Id,
+                Forename = User.Forename,
+                Surname = User.Surname,
+                Email = User.Email,
+                IsActive = User.IsActive,
+                DateOfBirth = User.DateOfBirth
+            };
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await OnSave.InvokeAsync(EditableUser);
+        await Close();
+    }
+
+    private async Task Close()
+    {
+        await IsVisibleChanged.InvokeAsync(false);
+    }
+}

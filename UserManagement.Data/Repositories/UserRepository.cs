@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace UserManagement.Data.Repositories;
@@ -17,10 +19,19 @@ public class UserRepository : IUserRepository
         _dbContext.Set<TEntity>().Add(entity);
         await _dbContext.SaveChangesAsync();
     }
-    public async Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class
+    public async Task UpdateAsync(Models.User user)
     {
-        _dbContext.Set<TEntity>().Attach(entity);
-        _dbContext.Entry(entity).State = System.Data.Entity.EntityState.Modified;
+        if (_dbContext.Users == null)
+            throw new InvalidOperationException("Users DbSet is not initialized.");
+
+        var existingUser = await _dbContext.Users.Where(x => x.Id == user.Id).FirstAsync();
+
+        existingUser.Forename = user.Forename;
+        existingUser.Surname = user.Surname;
+        existingUser.Email = user.Email;
+        existingUser.DateOfBirth = user.DateOfBirth;
+        existingUser.IsActive = user.IsActive;
+
         await _dbContext.SaveChangesAsync();
     }
     public async Task DeleteAsync<TEntity>(TEntity entity) where TEntity : class

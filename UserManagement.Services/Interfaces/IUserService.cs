@@ -12,10 +12,10 @@ public interface IUserService
     /// <param name="isActive"></param>
     /// <returns></returns>
     Task<IEnumerable<User>> FilterByActive(bool isActive);
-    IEnumerable<User> GetAll();
-    Task<List<User>> GetAllAsync();
+    IEnumerable<User> GetAllUsers();
+    Task<List<User>> GetAllUsersAsync();
     Task<User> CreateUserAsync(User user);
     Task<User> UpdateUserAsync(User user);
-    Task DeleteUserAsync(int userId);
+    Task DeleteUserAsync(long userId);
 
 }
