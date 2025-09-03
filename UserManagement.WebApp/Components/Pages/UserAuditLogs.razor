@@ -62,7 +62,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		auditLogs = await Http.GetFromJsonAsync<AuditLogs[]>("https://localhost:7280/logs/GetAll");
+		auditLogs = await Http.GetFromJsonAsync<AuditLogs[]>("logs/GetAll");
 	}
 }
 

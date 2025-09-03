@@ -1,0 +1,65 @@
+﻿@page "/user/{id:long}"
+@using UserManagement.WebApp.Models
+@using static System.Net.WebRequestMethods
+@attribute [StreamRendering]
+
+@if (auditLogs == null)
+{
+	<p><em>Loading...</em></p>
+}
+else{
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Action</th>
+				<th>Entity Name</th>
+				<th>Entity Id</th>
+				<th>Details</th>
+				<th>Timestamp</th>
+				<th style="width: 1px;"></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in auditLogs!)
+			{
+				<tr>
+					<td>
+						@item.Id
+					</td>
+					<td>
+						@item.Action
+					</td>
+					<td>
+						@item.EntityName
+					</td>
+					<td>
+						@item.EntityId
+					</td>
+					<td>
+						@item.Details
+					</td>
+					<td>
+						@item.Timestamp
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+}
+@inject HttpClient Http
+
+@code {
+	[Parameter]
+	public long Id { get; set; }
+	private UserModel? user;
+	private AuditLogs[]? auditLogs;
+	protected override async Task OnInitializedAsync()
+	{
+		user = await Http.GetFromJsonAsync<UserModel>($"users/GetById/{Id}");
+		auditLogs = await Http.GetFromJsonAsync<AuditLogs[]>($"logs/GetByEntity/user/{Id}");
+	}
+
+}

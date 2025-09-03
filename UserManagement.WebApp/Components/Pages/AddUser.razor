@@ -34,7 +34,7 @@
 	</div>
 	<br />
 	<div>
-		<button class="btn btn-primary" type="submit">Update</button>
+		<button class="btn btn-primary" type="submit">Save new user </button>
 	</div>
 </EditForm>
 
@@ -47,13 +47,13 @@
 	private void NavigateToUsersComponent() => Navigation.NavigateTo("users");
 
 	[SupplyParameterFromForm]
-	private UserManagement.WebApp.Models.Users? user { get; set; }
+	private UserManagement.WebApp.Models.UserModel? user { get; set; }
 
 	private ValidationMessageStore? messageStore;
 
 	protected override void OnInitialized()
 	{
-		user = new UserManagement.WebApp.Models.Users();
+		user = new UserManagement.WebApp.Models.UserModel();
 		editContext = new(user);
 		editContext.OnValidationRequested += HandleValidationRequested;
 		messageStore = new(editContext);
@@ -68,7 +68,7 @@
 
 	private async Task Submit()
 	{
-		await Http.PostAsJsonAsync("https://localhost:7280/users/Create", user);
+		await Http.PostAsJsonAsync("users/Create", user);
 		NavigateToUsersComponent();
 	}  
 

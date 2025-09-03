@@ -36,6 +36,8 @@ public class UserService : IUserService
     public async Task<List<User>> GetAllUsersAsync()
         => await _userRepository.GetAll<User>().ToListAsync();
 
+    public async Task<User?> GetUserByIdAsync(long userId)
+        => await _userRepository.GetAll<User>().Where(x => x.Id == userId).FirstOrDefaultAsync();
     public async Task DeleteUserAsync(long userId)
     {
         var user = await _userRepository.GetAll<User>().Where(x => x.Id == userId).FirstAsync();

@@ -1,5 +1,6 @@
 using UserManagement.WebApp.Components;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,7 +9,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped(sp =>
     new HttpClient
     {
-        BaseAddress = new Uri("https://localhost:5191")
+        BaseAddress = new Uri("https://localhost:7280")
     });
 builder.Services.AddBootstrapBlazor();
 var app = builder.Build();

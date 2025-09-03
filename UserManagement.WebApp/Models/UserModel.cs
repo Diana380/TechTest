@@ -1,6 +1,6 @@
 ﻿namespace UserManagement.WebApp.Models;
 
-public class Users
+public class UserModel
 {
     public long Id { get; set; }
     public string? Forename { get; set; }

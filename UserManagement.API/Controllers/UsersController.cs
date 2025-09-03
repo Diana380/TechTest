@@ -30,7 +30,17 @@ public class UsersController : ControllerBase
     {
         var items = await _userService.FilterByActive(isActive);
         var result = items.Select(ImplicitOperatorMapper.Map).ToList();
-        return Ok(items);
+        return Ok(result);
+    }
+    [HttpGet]
+    [Route("GetById/{userId}")]
+    public async Task<IActionResult> GetById([FromRoute]long userId)
+    {
+        var item = await _userService.GetUserByIdAsync(userId);
+        if (item == null)
+            return NotFound();
+        var result = ImplicitOperatorMapper.Map(item);
+        return Ok(result);
     }
     [HttpPost]
     [Route("Create")]
@@ -54,10 +64,10 @@ public class UsersController : ControllerBase
     }
     [HttpPost]
     [Route("Update")]
-    public Task<IActionResult> UpdateAsync([FromBody] UserListItemViewModel user)
+    public async Task<IActionResult> UpdateAsync([FromBody] UserListItemViewModel user)
     {
         if (user == null) 
-            return Task.FromResult<IActionResult>(BadRequest("User data is required."));
+            return (BadRequest("User data is required."));
         var updatedUser = new User
         {
             Id = user.Id,
@@ -66,8 +76,8 @@ public class UsersController : ControllerBase
             Email = user.Email,
             IsActive = user.IsActive
         };
-        var result = _userService.UpdateUserAsync(updatedUser);
-        return Task.FromResult<IActionResult>(Ok(result));
+        var result = await _userService.UpdateUserAsync(updatedUser);
+        return (Ok(ImplicitOperatorMapper.Map(result)));
     }
 
     [HttpPost]

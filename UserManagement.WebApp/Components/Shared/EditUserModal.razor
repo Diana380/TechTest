@@ -44,19 +44,19 @@
 }
 
 @code {
-    [Parameter] public Users? User { get; set; }
+    [Parameter] public UserModel? User { get; set; }
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
-    [Parameter] public EventCallback<Users> OnSave { get; set; }
+    [Parameter] public EventCallback<UserModel> OnSave { get; set; }
 
-    private Users EditableUser = new();
+    private UserModel EditableUser = new();
 
     protected override void OnParametersSet()
     {
         if (User != null)
         {
             // Create a copy to avoid editing the original until save
-            EditableUser = new Users
+            EditableUser = new UserModel
             {
                 Id = User.Id,
                 Forename = User.Forename,

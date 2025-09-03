@@ -20,4 +20,12 @@ public class AuditController: ControllerBase
         var result = items.Select(ImplicitOperatorMapper.Map).ToList();
         return Ok(items);
     }
+    [HttpGet]
+    [Route("GetByEntity/{entityName}/{entityId}")]
+    public async Task<IActionResult> GetByEntity([FromRoute] string entityName, [FromRoute] long entityId)
+    {
+        var items = await _auditLogService.GetLogsByEntityAsync(entityName, entityId);
+        var result = items.Select(ImplicitOperatorMapper.Map).ToList();
+        return Ok(items);
+    }
 }

@@ -54,7 +54,7 @@ else
 									Actions
 								</button>
 								<ul class="dropdown-menu" aria-labelledby="btnToggleActions">
-									<li><a class="dropdown-item" href="#">View</a></li>
+									<li><a class="dropdown-item" href="user/@item.Id">View</a></li>
 									<li>
 										<button class="dropdown-item" @onclick="() => ShowEditModal(item)">Edit</button>
 									</li>
@@ -95,49 +95,49 @@ else
 
 @code {
 
-	private Users[]? users;
+	private UserModel[]? users;
 	private bool isEditModalVisible = false;
-	private Users? selectedUser;
+	private UserModel? selectedUser;
 
 	protected override async Task OnInitializedAsync()
 	{
-		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
+		users = await Http.GetFromJsonAsync<UserModel[]>("users/GetAll");
 
 	}
 
 	private async Task ShowAll()
 	{
-		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
+		users = await Http.GetFromJsonAsync<UserModel[]>("users/GetAll");
 	}
 
 	private async Task ShowActiveOnly()
 	{
-		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetActive/True");
+		users = await Http.GetFromJsonAsync<UserModel[]>("users/GetActive/True");
 
 	}
 	private async Task ShowInactiveOnly()
 	{
-		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetActive/False");
+		users = await Http.GetFromJsonAsync<UserModel[]>("users/GetActive/False");
 
 	}
-	private async Task DeleteUser(UserManagement.WebApp.Models.Users user)
+	private async Task DeleteUser(UserManagement.WebApp.Models.UserModel user)
 	{
-		await Http.PostAsJsonAsync("https://localhost:7280/users/delete", user);
-		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
+		await Http.PostAsJsonAsync("users/delete", user);
+		users = await Http.GetFromJsonAsync<UserModel[]>("husers/GetAll");
 	}
 
-	private void ShowEditModal(Users user)
+	private void ShowEditModal(UserModel user)
 	{
 		selectedUser = user;
 		isEditModalVisible = true;
 	}
 
-	private async Task HandleUserSave(Users updatedUser)
+	private async Task HandleUserSave(UserModel updatedUser)
 	{
 		// Call your API to update the user
-		await Http.PostAsJsonAsync("https://localhost:7280/users/update", updatedUser);
+		await Http.PostAsJsonAsync("users/update", updatedUser);
 		// Refresh the list
-		users = await Http.GetFromJsonAsync<Users[]>("https://localhost:7280/users/GetAll");
+		users = await Http.GetFromJsonAsync<UserModel[]>("users/GetAll");
 		isEditModalVisible = false;
 	}
 }
