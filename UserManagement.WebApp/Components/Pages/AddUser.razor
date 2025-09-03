@@ -1,53 +1,55 @@
 ﻿@page "/addUser"
 @using UserManagement.WebApp.Models
-@using static System.Net.WebRequestMethods
 @attribute [StreamRendering]
 
 <PageTitle>Add User</PageTitle>
 <EditForm EditContext="editContext" OnValidSubmit="Submit" FormName="Add User">
-	<div>
-		<label>			
-			Forename
-			<InputText @bind-Value="user!.Forename" />
-		</label>		
-	</div>
-	<br />
-	<div>
-		<label>			
-			Surname
-			<InputText @bind-Value="user!.Surname" />
-		</label>
-	</div>
-	<br />
-	<div>
-		<label>
-			Email
-			<InputText @bind-Value="user!.Email" />
-		</label>
-	</div>
-	<br />
-	<div>
-		<label>
-			Date of Birth
-			<InputDate @bind-Value="user!.DateOfBirth" />
-		</label>
-	</div>
-	<br />
-	<div>
-		<button class="btn btn-primary" type="submit">Save new user </button>
-	</div>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="container mt-4">
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Forename</label>
+            <div class="col-sm-6">
+                <InputText @bind-Value="user!.Forename" class="form-control" />             
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Surname</label>
+            <div class="col-sm-6">
+                <InputText @bind-Value="user!.Surname" class="form-control" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-6">
+                <InputText @bind-Value="user!.Email" class="form-control" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Date of Birth</label>
+            <div class="col-sm-6">
+                <InputDate @bind-Value="user!.DateOfBirth" class="form-control" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-6">
+                <button class="btn btn-primary" type="submit">Save new user</button>
+            </div>
+        </div>
+    </div>
 </EditForm>
 
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
 @code {
-
 	private EditContext? editContext;
 	private void NavigateToUsersComponent() => Navigation.NavigateTo("users");
 
 	[SupplyParameterFromForm]
-	private UserManagement.WebApp.Models.UserModel? user { get; set; }
+	public required UserManagement.WebApp.Models.UserModel user { get; set; }
 
 	private ValidationMessageStore? messageStore;
 
@@ -59,26 +61,44 @@
 		messageStore = new(editContext);
 	}
 
-	private void HandleValidationRequested(object? sender,
-		ValidationRequestedEventArgs args)
+	private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
 	{
 		messageStore?.Clear();
 
+		// Custom validation logic
+		if (string.IsNullOrEmpty(user.Forename))
+		{
+			messageStore?.Add(() => user.Forename!, "Forename cannot be empty");
+		}
+		if (string.IsNullOrEmpty(user.Surname))
+		{
+			messageStore?.Add(() => user.Surname!, "Surname cannot be empty");
+		}
+		if (string.IsNullOrEmpty(user.Email))
+		{
+			messageStore?.Add(() => user.Email!, "Email cannot be empty");
+		}
+		if (!string.IsNullOrEmpty(user.Email) &&!user.Email!.Contains("@"))
+		{
+			messageStore?.Add(() => user.Email!, "Please enter a valid email address");
+		}
+		if (!user.DateOfBirth!.HasValue)
+		{
+			messageStore?.Add(() => user.DateOfBirth!, "Please enter a date of birth");
+		}
 	}
 
 	private async Task Submit()
 	{
 		await Http.PostAsJsonAsync("users/Create", user);
 		NavigateToUsersComponent();
-	}  
+    }
 
-
-
-	public void Dispose()
-	{
-		if (editContext is not null)
-		{
-			editContext.OnValidationRequested -= HandleValidationRequested;
-		}
-	}
+    public void Dispose()
+    {
+        if (editContext is not null)
+        {
+            editContext.OnValidationRequested -= HandleValidationRequested;
+        }
+    }
 }
