@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-//using FluentAssertions;
-using UserManagement.Data.Repositories;
-using UserManagement.Data.Models;
 using System.Threading.Tasks;
 using UserManagement.Data.Entities;
-using System.Data.Entity;
+using UserManagement.Data.Models;
+//using FluentAssertions;
+using UserManagement.Data.Repositories;
 
 namespace UserManagement.Data.Tests;
 
@@ -58,9 +59,19 @@ public class DataContextTests
  
     private DataContext CreateContext()
     {
-        var auditLogs = new Mock<DbSet<AuditLog>>();
+        var userList = new List<User>();
+        var queryable = userList.AsQueryable();
+
+        var mockSet = new Mock<DbSet<User>>();
+        mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(() => userList.AsQueryable().Provider);
+        mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(() => userList.AsQueryable().Expression);
+        mockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(() => userList.AsQueryable().ElementType);
+        mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(() => userList.AsQueryable().GetEnumerator());
+
+        mockSet.Setup(m => m.Add(It.IsAny<User>())).Callback<User>(user => userList.Add(user));
+
         var context = new Mock<DataContext>();
-        context.Setup(c => c.AuditLogs).Returns(auditLogs.Object);
+        context.Setup(c => c.Set<User>()).Returns(mockSet.Object);
         return context.Object;
     }
 }

@@ -55,7 +55,8 @@ public class UsersController : ControllerBase
             Forename = user.Forename,
             Surname = user.Surname,
             Email = user.Email,
-            IsActive = user.IsActive
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
         };
         var createdUser = await _userService.CreateUserAsync(newUser);
         var ceatedUser = ImplicitOperatorMapper.Map(createdUser);
@@ -74,7 +75,8 @@ public class UsersController : ControllerBase
             Forename = user.Forename,
             Surname = user.Surname,
             Email = user.Email,
-            IsActive = user.IsActive
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
         };
         var result = await _userService.UpdateUserAsync(updatedUser);
         return (Ok(ImplicitOperatorMapper.Map(result)));

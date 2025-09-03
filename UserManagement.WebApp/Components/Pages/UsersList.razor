@@ -46,7 +46,7 @@ else
 							@(item.IsActive ? "Yes" : "No")
 						</td>
 						<td>
-							@(item.DateOfBirth)
+							@item.DateOfBirth
 						</td>
 						<td>
 							<div class="dropdown">
@@ -81,7 +81,7 @@ else
 			<button class="btn btn-default" @onclick="ShowInactiveOnly">Non Active</button>
 		</div>
 
-		<a href="addUser" class="btn btn-default">Add User</a>
+		<a href="addUser" class="btn btn-primary">Add User</a>
 
 
 	</div>
@@ -122,8 +122,8 @@ else
 	}
 	private async Task DeleteUser(UserManagement.WebApp.Models.UserModel user)
 	{
-		await Http.PostAsJsonAsync("users/delete", user);
-		users = await Http.GetFromJsonAsync<UserModel[]>("husers/GetAll");
+			await Http.PostAsJsonAsync("users/delete", user);
+			users = await Http.GetFromJsonAsync<UserModel[]>("users/GetAll");	
 	}
 
 	private void ShowEditModal(UserModel user)
