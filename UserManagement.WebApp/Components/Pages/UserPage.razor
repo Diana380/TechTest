@@ -1,65 +1,58 @@
 ﻿@page "/user/{id:long}"
 @using UserManagement.WebApp.Models
-@using static System.Net.WebRequestMethods
 @attribute [StreamRendering]
 
 @if (auditLogs == null)
 {
-	<p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
-else{
-<div class="table-responsive">
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Action</th>
-				<th>Entity Name</th>
-				<th>Entity Id</th>
-				<th>Details</th>
-				<th>Timestamp</th>
-				<th style="width: 1px;"></th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in auditLogs!)
-			{
-				<tr>
-					<td>
-						@item.Id
-					</td>
-					<td>
-						@item.Action
-					</td>
-					<td>
-						@item.EntityName
-					</td>
-					<td>
-						@item.EntityId
-					</td>
-					<td>
-						@item.Details
-					</td>
-					<td>
-						@item.Timestamp
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
-</div>
+else
+{
+    <ul class="list-group">
+		@foreach (var item in auditLogs)
+        {           
+            <li class="list-group-item">
+                <div>
+					<strong>Logd:</strong> @item.Id
+                    <strong>Entity Id:</strong> @item.EntityId |
+                    <strong>Action:</strong> @item.Action |
+                    <strong>Entity Name:</strong> @item.EntityName
+				<button class="btn btn-link btn-sm ms-2" @onclick="() => ToggleDetails(item.Id)">
+						@(selectedId == item.Id ? "Hide Details" : "View Details")
+                    </button>
+                </div>
+				@if (selectedId == item.Id)
+                {
+                    <div class="mt-2 ms-3">
+                        <div><strong>Details:</strong> @item.Details</div>
+                        <div><strong>Timestamp:</strong> @item.Timestamp</div>
+                    </div>
+                }
+            </li>
+        }
+    </ul>
 }
+
 @inject HttpClient Http
 
 @code {
-	[Parameter]
-	public long Id { get; set; }
-	private UserModel? user;
-	private AuditLogs[]? auditLogs;
-	protected override async Task OnInitializedAsync()
-	{
-		user = await Http.GetFromJsonAsync<UserModel>($"users/GetById/{Id}");
-		auditLogs = await Http.GetFromJsonAsync<AuditLogs[]>($"logs/GetByEntity/user/{Id}");
-	}
+    [Parameter]
+    public long Id { get; set; }
+    private UserModel? user;
+    private AuditLogs[]? auditLogs;
+    private long? selectedId = null;
 
+    protected override async Task OnInitializedAsync()
+    {
+        user = await Http.GetFromJsonAsync<UserModel>($"users/GetById/{Id}");
+        auditLogs = await Http.GetFromJsonAsync<AuditLogs[]>($"logs/GetByEntity/user/{Id}");
+    }
+
+    private void ToggleDetails(long Id)
+    {
+		if (selectedId == Id)
+			selectedId = null;
+        else
+			selectedId = Id;
+    }
 }
